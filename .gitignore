@@ -1,0 +1,4 @@
+creds/
+argo-workflows/overlay/workflows/githubcred.yaml
+argo-workflows/overlay/workflows/production/regcred.yaml
+notes/

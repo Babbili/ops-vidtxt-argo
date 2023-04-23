@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: github
+spec:
+  service:
+    ports:
+    - port: 12000
+      targetPort: 12000
+  github:
+    webhook:
+      owner: Babbili
+      repository: ${PY_VIDTXT_RPO}
+      webhook:
+        endpoint: /vidtxt-wh-dmlkdHh0LXdlYmhvb2sK
+        port: "12000"
+        method: POST
+        url: http://${HOST}
+      events:
+        - "*"
+      apiToken:
+        name: github-access
+        key: token
+      insecure: true
+      active: true
+      contentType: json
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: github
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+           name: github-eventsource-svc
+           port:
+             number: 12000
+    host: ${HOST}
